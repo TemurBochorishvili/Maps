@@ -36,7 +36,12 @@ export class AppComponent implements OnInit {
   }
 
   layers = [
-    circle([41.716667, 44.783333], { radius: 5000 }),
+    circle([41.716667, 44.783333], {
+      color: 'red',
+      fillColor: '#f03',
+      fillOpacity: 0.5,
+      radius: 5000
+    }),
     polygon([[41.765, 44.745], [41.7, 44.789], [41.656, 44.545]]),
     marker([46.879966, -121.726909])
   ];
@@ -44,16 +49,16 @@ export class AppComponent implements OnInit {
   constructor(private changeDetector: ChangeDetectorRef) { }
 
   ngOnInit() {
-    
   }
 
-  onCheckPin(){
+  onCheckPin() {
     this.checkPin = !this.checkPin;
     this.checkPinText = this.checkPin ? 'Disable putting pins' : 'Enable putting pins';
   }
 
-  onRemoveLayerClick(){
-
+  onRemoveLayerClick() {
+    this.removeLayers = !this.removeLayers;
+    this.removeLayersText = this.removeLayers ? 'Disable to remove' : 'Enable to remove';
   }
 
   onMapReady(map: Map) {
@@ -63,8 +68,8 @@ export class AppComponent implements OnInit {
   onMapClick() {
     if (this.checkPin) {
       this.map.once('click', (event: LeafletMouseEvent) => {
-        console.log(event.latlng);
-        this.layers.push(marker([event.latlng.lat, event.latlng.lng], {
+        console.log(event);
+        this.layers.push(marker([event.latlng.lat, event.latlng.lng], { //map.addlayer
           draggable: true,
           icon: icon({
             iconSize: [25, 41],
@@ -72,9 +77,8 @@ export class AppComponent implements OnInit {
             iconUrl: 'assets/marker-icon.png',
             shadowUrl: 'assets/marker-shadow.png',
           })
-
         }).bindPopup("as " + event.latlng.lng)
-      );
+        );
       });
 
       setTimeout(() => {
@@ -82,7 +86,8 @@ export class AppComponent implements OnInit {
       },
         100);
     }
-    if(this.removeLayers){
+
+    if (this.removeLayers) {
       this.layers.forEach(ass => {
         ass.once('click', (event: LeafletMouseEvent) => {
           this.map.removeLayer(ass);
